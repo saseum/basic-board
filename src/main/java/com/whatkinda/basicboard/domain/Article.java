@@ -11,7 +11,7 @@ import java.util.Objects;
 import java.util.Set;
 
 @Getter
-@ToString
+@ToString(callSuper = true)
 @Table(indexes = {
         @Index(columnList = "title"),
         @Index(columnList = "hashtag"),
@@ -26,6 +26,10 @@ public class Article extends AuditingFields {
     private Long id;
 
     @Setter
+    @ManyToOne(optional = false)
+    private UserAccount userAccount;
+
+    @Setter
     @Column(nullable = false)
     private String title;
 
@@ -37,21 +41,22 @@ public class Article extends AuditingFields {
     private String hashtag;
 
     @ToString.Exclude
-    @OrderBy("id")
+    @OrderBy("createdAt DESC")
     @OneToMany(mappedBy = "article", cascade = CascadeType.ALL)
     private final Set<Comment> comments = new LinkedHashSet<>();
 
     protected Article() {
     }
 
-    private Article(String title, String contents, String hashtag) {
+    private Article(UserAccount userAccount, String title, String contents, String hashtag) {
+        this.userAccount = userAccount;
         this.title = title;
         this.contents = contents;
         this.hashtag = hashtag;
     }
 
-    public static Article of(String title, String contents, String hashtag) {
-        return new Article(title, contents, hashtag);
+    public static Article of(UserAccount userAccount, String title, String contents, String hashtag) {
+        return new Article(userAccount, title, contents, hashtag);
     }
 
     @Override

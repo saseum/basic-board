@@ -9,7 +9,7 @@ import lombok.ToString;
 import java.util.Objects;
 
 @Getter
-@ToString
+@ToString(callSuper = true)
 @Table(indexes = {
         @Index(columnList = "contents"),
         @Index(columnList = "createdAt"),
@@ -27,18 +27,23 @@ public class Comment extends AuditingFields {
     private Article article;
 
     @Setter
+    @ManyToOne(optional = false)
+    private UserAccount userAccount;
+
+    @Setter
     @Column(nullable = false, length = 500)
     private String contents;
 
     protected Comment() {}
 
-    private Comment(Article article, String contents) {
+    private Comment(Article article, UserAccount userAccount, String contents) {
+        this.userAccount = userAccount;
         this.article = article;
         this.contents = contents;
     }
 
-    public static Comment of(Article article, String contents) {
-        return new Comment(article, contents);
+    public static Comment of(Article article, UserAccount userAccount, String contents) {
+        return new Comment(article, userAccount, contents);
     }
 
     @Override
