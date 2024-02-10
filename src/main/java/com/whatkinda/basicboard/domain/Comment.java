@@ -1,29 +1,22 @@
 package com.whatkinda.basicboard.domain;
 
-import com.whatkinda.basicboard.config.JpaConfig;
+import com.whatkinda.basicboard.domain.common.AuditingFields;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedBy;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Getter
-@ToString
+@ToString(callSuper = true)
 @Table(indexes = {
         @Index(columnList = "contents"),
         @Index(columnList = "createdAt"),
         @Index(columnList = "createdBy")
 })
-@EntityListeners(AuditingEntityListener.class)
 @Entity
-public class Comment {
+public class Comment extends AuditingFields {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,23 +27,23 @@ public class Comment {
     private Article article;
 
     @Setter
+    @ManyToOne(optional = false)
+    private UserAccount userAccount;
+
+    @Setter
     @Column(nullable = false, length = 500)
     private String contents;
 
-    @CreatedDate @Column(nullable = false) private LocalDateTime createdAt;
-    @CreatedBy @Column(nullable = false, length = 100) private String createdBy;
-    @LastModifiedDate @Column(nullable = false) private LocalDateTime modifiedAt;
-    @LastModifiedBy @Column(nullable = false, length = 100) private String modifiedBy;
-
     protected Comment() {}
 
-    private Comment(Article article, String contents) {
+    private Comment(Article article, UserAccount userAccount, String contents) {
+        this.userAccount = userAccount;
         this.article = article;
         this.contents = contents;
     }
 
-    public static Comment of(Article article, String contents) {
-        return new Comment(article, contents);
+    public static Comment of(Article article, UserAccount userAccount, String contents) {
+        return new Comment(article, userAccount, contents);
     }
 
     @Override
@@ -65,4 +58,5 @@ public class Comment {
     public int hashCode() {
         return Objects.hash(id);
     }
+
 }
