@@ -10,9 +10,9 @@ logging:
 
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/basic_board
-    username: whatkinda
-    password: 4787
+    url:
+    username:
+    password:
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     defer-datasource-initialization: true
