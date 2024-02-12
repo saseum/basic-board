@@ -2,6 +2,8 @@ package com.whatkinda.basicboard.repository;
 
 import com.whatkinda.basicboard.config.JpaConfig;
 import com.whatkinda.basicboard.domain.Article;
+import com.whatkinda.basicboard.domain.UserAccount;
+import org.apache.catalina.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +18,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DataJpaTest
 class JpaRepositoryTest {
 
-    @Autowired
-    private ArticleRepository articleRepository;
-    @Autowired
-    private CommentRepository commentRepository;
+    @Autowired private ArticleRepository articleRepository;
+    @Autowired private CommentRepository commentRepository;
+    @Autowired private UserAccountRepository userAccountRepository;
 
     @DisplayName("SELECT 테스트")
     @Test
@@ -38,7 +39,7 @@ class JpaRepositoryTest {
     void givenTestData_whenInserting_thenWorksFine() {
         // given
         long prevCnt = articleRepository.count();
-        Article article = Article.of("new article", "new contents", "#whatkinda");
+        Article article = Article.of(UserAccount.of("test", "1234", "test@email.com", "nickname", "memo"), "new article", "new contents", "#whatkinda");
 
         // when
         Article savedArticle = articleRepository.save(article);
